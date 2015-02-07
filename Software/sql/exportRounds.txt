@@ -1,0 +1,18 @@
+SELECT
+U.Name UserName,
+R.id RoundID,
+S.id SessionID,
+R.Average_Force,
+R.Average_Frequency,
+S.Force_CutOff_High,
+S.Force_CutOff_Low,
+S.Frequency_CutOff_High,
+S.Frequency_CutOff_Low,
+S.Date_Started
+from 
+Sessions S
+JOIN Rounds R on
+R.Sessions_id = S.id
+JOIN Users U on
+U.id = S.Users_id
+

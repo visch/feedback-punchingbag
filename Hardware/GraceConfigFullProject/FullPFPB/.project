@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>FullPFPB</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.rtsc.xdctools.buildDefinitions.XDC.externalXDCProjectNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>FullPFPB.cfg</name>
+			<type>1</type>
+			<location>C:/Users/BigalsLaptop/Grace/FullPFPB/FullPFPB.cfg</location>
+		</link>
+	</linkedResources>
+</projectDescription>

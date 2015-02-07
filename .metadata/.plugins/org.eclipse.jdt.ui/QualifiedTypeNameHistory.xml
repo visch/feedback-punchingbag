@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="gui.CreateUserScreen"/>
+<fullyQualifiedTypeName name="gui.CreateWorkoutScreen"/>
+<fullyQualifiedTypeName name="gui.RestRoundScreen"/>
+<fullyQualifiedTypeName name="gui.BaselineScreen"/>
+<fullyQualifiedTypeName name="gui.ExportResultsScreen"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="javax.swing.JPanel"/>
+<fullyQualifiedTypeName name="backend.RawDataStorage"/>
+</qualifiedTypeNameHistroy>

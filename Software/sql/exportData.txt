@@ -1,0 +1,19 @@
+SELECT
+U.Name UserName,
+R.id RoundID,
+S.id SessionID,
+D.Force_Average DataForceAverage,
+D.Number_Of_Punches NumberOfPunches,
+D.startTime PunchesStartTime,
+D.endTime PunchesEndTime
+
+
+from
+Data D 
+join Rounds R ON
+R.id = D.Rounds_id
+join Sessions S ON
+S.id = R.Sessions_id
+join Users U ON
+U.id = S.Users_id
+ORDER BY R.id

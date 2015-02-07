@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--  This file conforms to the DTD xdc/bld/build.dtd -->
+<package name="xconfig_FullPFPB" version="" producerId="undefined">
+    <units>
+    </units>
+    <sources>
+        <srcFile name="package/cfg/FullPFPB_p430.c"/>
+    </sources>
+    <configscripts>
+        <srcFile name="C:/Users/BigalsLaptop/Grace/FullPFPB/FullPFPB.cfg"/>
+    </configscripts>
+    <makefiles>
+        <srcFile name="package.mak" src="package.bld"/>
+        <srcFile name="package/package.xdc.dep" src="package.xdc"/>
+        <srcFile name="package/cfg/FullPFPB_p430.mak" src="package.bld"/>
+        <srcFile name="package/cfg/FullPFPB_p430.o430.dep" src="package/cfg/FullPFPB_p430.c"/>
+        <srcFile name="package/cfg/FullPFPB_p430.dep" src="package/cfg/FullPFPB_p430.cfg"/>
+        <srcFile name="package/cfg/FullPFPB.x430.mak" src="package.bld"/>
+        <srcFile name="package/rel/xconfig_FullPFPB.tar.dep" src="package/rel/xconfig_FullPFPB.xdc.inc"/>
+    </makefiles>
+    <targets>
+        <target name="ti.targets.msp430.Generic"
+            version="ti.targets.msp430.Generic{1,0,0"
+            rawVersion=""
+            platform="undefined"
+            isa="430"
+            suffix="430"
+            rootDir="."
+            os="undefined"
+            rts="ti.targets.msp430.rts430">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="undefined"/>
+        </target>
+    </targets>
+    <libraries>
+    </libraries>
+    <configurations>
+    <configuration name="FullPFPB"
+        pname="FullPFPB.p430"
+        target="ti.targets.msp430.Generic"
+        platform="ti.platforms.msp430:MSP430G2553"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/FullPFPB_p430.cfg"
+        xCfgPrefix="package/cfg/FullPFPB_p430"
+        cfgScript="C:/Users/BigalsLaptop/Grace/FullPFPB/FullPFPB.cfg"
+        cfgArgs="null"
+        />
+    </configurations>
+    <executables>
+    <executable name="FullPFPB"
+        pname="FullPFPB.x430"
+        target="ti.targets.msp430.Generic"
+        platform="ti.platforms.msp430:MSP430G2553"
+        profile="release"
+        xCfgScript="package/cfg/FullPFPB_p430.cfg"
+        xCfgPrefix="package/cfg/FullPFPB_p430"
+        cfgScript="C:/Users/BigalsLaptop/Grace/FullPFPB/FullPFPB.cfg"
+        cfgArgs="null"
+        />
+    </executables>
+    <tests>
+    <test exeName="FullPFPB.x430"
+        args=""
+        groupName="FullPFPB.x430"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    </tests>
+    <releases relDir="package/rel/">
+    <release name="xconfig_FullPFPB"
+        pname="xconfig_FullPFPB.tar"
+        label="default"
+    >
+        <file name="package/package.bld.xml"/>
+        <file name="package/build.cfg"/>
+        <file name="package/package.xdc.inc"/>
+    </release>
+    </releases>
+    <repositories>
+    </repositories>
+</package>

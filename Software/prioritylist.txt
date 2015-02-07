@@ -1,0 +1,18 @@
+2. Hardware figure out how to send good data - Alex	(TABLED, revist never)
+3. Force and Frequency punches detection for GUI and for Database Testing - Ryan (4 hours)
+	COuld use some testing 
+	
+	--WORKIKNG ON NOW
+	
+	
+7. Managing rounds and sessions and data, State Machine to the program (8 hours)
+]	Resuming a session and jumping into a specefic Round (Low priority ) 
+
+	
+5. Use the SQL lite database in the GUI (2 hours)
+	Finish SQLLite Function - Derek (4 hours)
+
+
+4. Feedback doing based on Workout ( Can't done until 3 and 1 are done)
+	Music in real time (2 hours)
+	Color Feedback (1 hour)

@@ -1,0 +1,35 @@
+@Grapes([
+ @Grab(group='org.xerial',module='sqlite-jdbc',version='3.7.2'),
+ @GrabConfig(systemClassLoader=true)
+])
+
+import java.sql.*
+import org.sqlite.SQLite
+import groovy.sql.Sql
+
+//Class.forName("org.sqlite.JDBC")
+long startTime = System.currentTimeMillis();
+// ... do something ...
+
+ 
+def sql = Sql.newInstance("jdbc:sqlite:C:\\Users\\BigalsLaptop\\coding_derek\\sample.db", "org.sqlite.JDBC")
+
+ 
+int maxInt = 1;
+def people = sql.dataSet("person")
+sql.execute("BEGIN")
+for (int i = 1; i <= maxInt; i++) {
+
+println i; 
+
+people.add(id:i, name:"leo")
+}
+sql.eachRow("select * from person") {  
+  println("id=${it.id}, name= ${it.name}") 
+  }
+sql.execute("COMMIT")
+long estimatedTime = System.currentTimeMillis() - startTime;
+println ""
+println estimatedTime;
+println "Total time per record: ${estimatedTime/maxInt}ms"
+println "Inserts per second: ${1000/(estimatedTime/maxInt)}"

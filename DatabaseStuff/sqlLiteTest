@@ -1,0 +1,4 @@
+CREATE TABLE alarms (ROWID INTEGER PRIMARY KEY AUTOINCREMENT, alarm_id, 
+                     todo INTEGER, flags INTEGER, offset_days INTEGER, 
+                     reminder_date INTEGER, time INTEGER,
+                     unrecognized_data BLOB);

@@ -1,0 +1,390 @@
+package gui;
+
+import java.awt.Toolkit;
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import javax.media.MediaException;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
+import backend.*;
+import backend.datatypes.*;
+import backend.GUIController;
+
+@SuppressWarnings("serial")
+public class WorkoutScreen extends JFrame {
+	private int timeChunk=5; //length of moving range of time for Punches and Frequency to be counted
+	private WorkoutScreen self = this;
+	private JPanel contentPane;
+	private JTextField forceOutput;
+	private JTextField freqOutput;
+	private JTextField txtminsec;
+	private JLabel lblForceGoal;
+	private JLabel lblFrequencyGoal;
+	private int comPortFlag = 0;
+	private double forceNFreq[];
+	protected Object inWorkoutScreen;
+	public int timerCheck;
+	Timer roundLoopTimer;
+	GUIController controlObj;
+	Workout currentWorkout;
+	User currentUser;
+	String portName;
+	public RawDataStorage messagesList;
+	public Punches punches;
+	SerialPortReaderWrapper runnable;
+	Thread serialPortSerivce;
+	AudioPlay musicRunnable;
+	int rndTime;
+	double forceGoalMin;
+	double freqGoalMin;
+	double forceGoalMax;
+	double freqGoalMax;
+	//public Session ses; 
+
+	/**
+	 * Create the application.
+	 * @param guiController 
+	 * @param comPortName 
+	 * @param musicRunnable2 
+	 * @param currentWorkout 
+	 * @param currentUser 
+	 * @throws InterruptedException 
+	 * @throws MediaException 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 */
+	public WorkoutScreen(GUIController guiController, User currUsr, Workout currWkrt, String comPortName, AudioPlay musicRunnable2) throws MalformedURLException, IOException, MediaException, InterruptedException {
+		controlObj = guiController;
+		currentUser = currUsr;
+		currentWorkout = currWkrt;
+		portName = comPortName;
+		musicRunnable = musicRunnable2;
+		initialize();
+		
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 * @throws InterruptedException 
+	 * @throws MediaException 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 */
+	private void initialize() throws MalformedURLException, IOException, MediaException, InterruptedException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(WorkoutScreen.class.getResource("/Images/PFPBLogo.png")));
+		setTitle("Workout in Progress...");
+		setBounds(100, 100, 780, 420);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		if(currentWorkout.getVisibility_CurrentForce().equals("TRUE"))
+		{
+			JLabel lblForce = new JLabel("Force:");
+			lblForce.setFont(new Font("Segoe UI", Font.PLAIN, 42));
+			lblForce.setBounds(46, 32, 165, 56);
+			contentPane.add(lblForce);
+			
+			forceOutput = new JTextField();
+			forceOutput.setMargin(new Insets(2, 4, 2, 4));
+			forceOutput.setHorizontalAlignment(SwingConstants.RIGHT);
+			forceOutput.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			forceOutput.setBackground(new Color(255, 255, 204));
+			forceOutput.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+			forceOutput.setEditable(false);
+			forceOutput.setFont(new Font("Segoe UI Light", Font.PLAIN, 57));
+			forceOutput.setText("000.00");
+			forceOutput.setBounds(46, 89, 206, 65);
+			forceOutput.setColumns(10);
+			contentPane.add(forceOutput);
+			
+			JLabel lblLbssqIn = new JLabel("Newtons");
+			lblLbssqIn.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+			lblLbssqIn.setBounds(270, 125, 66, 21);
+			contentPane.add(lblLbssqIn);
+		}
+		
+		if(currentWorkout.getVisibility_CurrentFrequency().equals("TRUE"))
+		{
+			JLabel lblFrequency = new JLabel("Frequency:");
+			lblFrequency.setFont(new Font("Segoe UI", Font.PLAIN, 42));
+			lblFrequency.setBounds(46, 200, 253, 73);
+			contentPane.add(lblFrequency);
+			
+			freqOutput = new JTextField();
+			freqOutput.setMargin(new Insets(2, 16, 2, 17));
+			freqOutput.setHorizontalAlignment(SwingConstants.RIGHT);
+			freqOutput.setText("000.00");
+			freqOutput.setFont(new Font("Segoe UI Light", Font.PLAIN, 57));
+			freqOutput.setEditable(false);
+			freqOutput.setColumns(10);
+			freqOutput.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+			freqOutput.setBackground(new Color(255, 255, 204));
+			freqOutput.setBounds(46, 265, 206, 65);
+			contentPane.add(freqOutput);
+			
+			JLabel lblHitssec = new JLabel("Hits/Sec");
+			lblHitssec.setFont(new Font("Segoe UI Light", Font.PLAIN, 18));
+			lblHitssec.setBounds(270, 301, 85, 21);
+			contentPane.add(lblHitssec);
+		}
+		
+		if(currentWorkout.getVisibility_Timer().equals("TRUE"))
+		{
+			JLabel lblRoundTimer = new JLabel("Round Timer:");
+			lblRoundTimer.setFont(new Font("Segoe UI", Font.PLAIN, 42));
+			lblRoundTimer.setBounds(442, 127, 291, 49);
+			contentPane.add(lblRoundTimer);
+			
+			txtminsec = new JTextField();
+			txtminsec.setBackground(new Color(255, 255, 204));
+			txtminsec.setHorizontalAlignment(SwingConstants.CENTER);
+			txtminsec.setFont(new Font("Segoe UI Light", Font.PLAIN, 37));
+			txtminsec.setText(" ");
+			txtminsec.setBounds(442, 181, 247, 74);
+			txtminsec.setColumns(10);
+			contentPane.add(txtminsec);
+		}
+		
+		if(currentWorkout.getVisibility_GoalForce().equals("TRUE"))
+		{
+			lblForceGoal = new JLabel("Force Min:  0000.0 Newtons   |   Force Max:  0000.0 Newtons");
+			lblForceGoal.setFont(new Font("Segoe UI Light", Font.PLAIN, 12));
+			lblForceGoal.setBounds(46, 158, 326, 31);
+			contentPane.add(lblForceGoal);
+		}
+		
+		if(currentWorkout.getVisibility_GoalFrequency().equals("TRUE"))
+		{
+			lblFrequencyGoal = new JLabel("Frequency Min:  00.0 Hits/Sec   |   Frequency Max:  00.0 Hits/Sec");
+			lblFrequencyGoal.setFont(new Font("Segoe UI Light", Font.PLAIN, 12));
+			lblFrequencyGoal.setBounds(46, 340, 406, 31);
+			contentPane.add(lblFrequencyGoal);
+		}
+		runWorkout();
+	}
+	
+	public void runWorkout() throws MalformedURLException, IOException, MediaException, InterruptedException {
+		messagesList = new RawDataStorage();
+		punches = new Punches(messagesList); 
+		Double tempTimer = Double.parseDouble(currentWorkout.getRoundTime())*60;
+		timerCheck =  tempTimer.intValue();
+		rndTime = timerCheck;
+		forceGoalMin = currentUser.getMinGoalForce();
+		freqGoalMin = currentUser.getMinGoalFrequency();
+		forceGoalMax = currentUser.getMaxGoalForce();
+		freqGoalMax = currentUser.getMaxGoalFrequency();
+		
+		//Write the Round to the database
+		
+		
+		/************************STARTING THE SERIAL PORT HANDLER THREAD***********************************/
+		runnable = new SerialPortReaderWrapper(portName, this, messagesList);
+		serialPortSerivce = new Thread(runnable);		
+		serialPortSerivce.start();
+		
+		if(currentWorkout.getActionCutOff_Force().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Force().equals("Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Music Volume"))
+		{
+			/************************STARTING THE MUSIC PLAYER*****************************************/
+			//musicRunnable = new AudioPlay(currentUser.getMusic());
+			musicRunnable.startPlayer();
+		}
+
+		//Main loop to execute every second	
+		roundLoopTimer = new Timer(1000, new ActionListener() {
+			int currentTime=0;
+
+			public void actionPerformed(ActionEvent e) {
+				
+				timerCheck--;
+				currentTime++;
+				punches.collectPunches();
+
+				/*Check if music enabled */
+				if(currentWorkout.getActionCutOff_Force().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Force().equals("Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Music Volume"))
+				{
+					//check if song is still playing/change song 
+					musicRunnable.checkplayer();
+				}
+				
+				
+				if(timerCheck == 0)
+				{
+					//turn off music
+//					if(musicRunnable != null)
+//					{
+//						AudioPlay.stop();
+//					}
+					
+					//Open Rest Round Screen
+					try {
+						self.setComPortFlag(1);
+						runnable.terminate();
+						serialPortSerivce.join();
+						
+						
+						
+						double fullRes[] = punches.getRoundResults(0, rndTime);
+						controlObj.workoutToRestRndTrans(fullRes);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					//Stop the timer from executing further, and dispose work out frame
+					roundLoopTimer.setRepeats(false);
+					roundLoopTimer.stop();
+				}
+				else {
+					//Update the Round Timer
+					if((timerCheck / 60) == 0)
+					{
+						//Only seconds left in the round
+						txtminsec.setText((timerCheck % 60) + "sec");
+					}
+					else {
+						//Minutes and seconds left in the round
+						txtminsec.setText((timerCheck / 60) + "min " + (timerCheck % 60) + "sec");
+					}
+					
+					//Getting the new Average Force and Frequency for the current time chunk
+					//int currentTime = rndTime - timerCheck;
+					
+					if(currentTime >= timeChunk)
+					{
+						//Get average force and frequency here
+						forceNFreq = punches.getRoundResults((currentTime-timeChunk), currentTime);
+					}
+					else
+					{
+						//Get average force and frequency here
+						forceNFreq = punches.getRoundResults(0, currentTime);
+					}
+					
+					
+					//If the currentForce is to be shown for this work out type
+					if(currentWorkout.getVisibility_CurrentForce().equals("TRUE"))
+					{
+						//Update the Force Value
+						forceOutput.setText(String.format("%,.2f", forceNFreq[0]));
+						//Color Feedback Stimuli for the force value
+						if(currentWorkout.getActionCutOff_Force().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Color Change For Box") | currentWorkout.getActionCutOff_Force().equals("Color And Music Volume") )
+						{
+							//if under the min and less than the max
+							if((forceNFreq[0] >= forceGoalMin) && (forceNFreq[0] <= forceGoalMax))
+							{
+								forceOutput.setBackground(new Color(0, 255, 0));     //For above goal
+							}
+							else
+							{
+								forceOutput.setBackground(new Color(255, 0, 0));     //For bellow goal
+							}
+						}
+					}
+					
+					if(currentWorkout.getVisibility_CurrentFrequency().equals("TRUE"))
+					{
+						double freq;
+						freq=forceNFreq[1]/timeChunk; 
+						
+						DecimalFormat df = new DecimalFormat("#0.00");
+						String result = df.format(freq);
+						freqOutput.setText(result);
+						
+						//Color Feedback Stimuli for the frequency value
+						if(currentWorkout.getActionCutOff_Frequency().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Color Change For Box") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Volume"))
+						{
+							if((forceNFreq[1] >= freqGoalMin) && (forceNFreq[1] <= freqGoalMax))
+							{
+								freqOutput.setBackground(new Color(0, 255, 0));     //For bellow goal
+								
+							}
+							else
+							{
+								freqOutput.setBackground(new Color(255, 0, 0));     //For above goal
+							}							
+						}
+					}
+					if(currentWorkout.getVisibility_GoalForce().equals("TRUE"))
+					{
+						//TODO: Update the Goal Force Value
+						lblForceGoal.setText(String.format("Force Min:  %4.2f Newtons   |   Force Max:  %4.2f Newtons", forceGoalMin, forceGoalMax));
+					}
+					if(currentWorkout.getVisibility_GoalFrequency().equals("TRUE"))
+					{
+						//TODO: Update the Goal Frequency Value
+						lblFrequencyGoal.setText(String.format("Frequency Min:  %2.4f Hits/Sec   |   Frequency Max:  %2.4f Hits/Sec", freqGoalMin, freqGoalMax));
+					}
+					
+					if(currentWorkout.getActionCutOff_Force().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Music Frequency"))
+					{
+						//Perform the feedback stimuli for music here based on force and frequency goal value/goal
+						//If outside the goal range
+						if(((forceNFreq[0] < forceGoalMin) || (forceNFreq[0] > forceGoalMax)) && (currentWorkout.getActionCutOff_Force().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Force().equals("Music Frequency")))
+						{     
+							musicRunnable.chgFreq();
+						}
+						else if(((forceNFreq[1] < freqGoalMin) || (forceNFreq[1] > freqGoalMax)) && (currentWorkout.getActionCutOff_Frequency().equals("Color And Music Frequency") | currentWorkout.getActionCutOff_Frequency().equals("Music Frequency")))
+						{
+							musicRunnable.chgFreq();
+						}
+						//If meeting there goals
+						else
+						{
+							musicRunnable.restoreFreq();
+						}
+					}
+					//If outside the goal range
+					if(currentWorkout.getActionCutOff_Force().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Force().equals("Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Music Volume"))
+					{
+						//Perform the feedback stimuli for music here based on force and frequency goal value/goal
+						System.out.print(forceNFreq[0] +" Min: " + forceGoalMin + "Max: " +forceGoalMax);
+						if(((forceNFreq[0] < forceGoalMin) || (forceNFreq[0] > forceGoalMax)) && (currentWorkout.getActionCutOff_Force().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Force().equals("Music Volume")))
+						{
+							System.out.print("Im in the force if for volume");
+							musicRunnable.chgVolume();
+						}
+						else if(((forceNFreq[1] < freqGoalMin) || (forceNFreq[1] > freqGoalMax)) && (currentWorkout.getActionCutOff_Frequency().equals("Color And Music Volume") | currentWorkout.getActionCutOff_Frequency().equals("Music Volume")))
+						{
+							System.out.print("Im in the frequency else if");
+							musicRunnable.chgVolume();
+						}
+						//If meeting there goals
+						else
+						{
+							System.out.print("Im in the else part for volume");
+							musicRunnable.restoreVol();
+						}
+					}
+				}
+			}
+		});
+		
+		roundLoopTimer.setRepeats(true);
+		roundLoopTimer.start();	
+	}
+
+	public int getComPortFlag() {
+		return comPortFlag;
+	}
+
+	public void setComPortFlag(int comPortFlag) {
+		this.comPortFlag = comPortFlag;
+	}
+}

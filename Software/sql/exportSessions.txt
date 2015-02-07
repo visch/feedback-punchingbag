@@ -1,0 +1,14 @@
+Select
+U.Name UserName,
+S.id SessionId,
+W.Name WorkoutName,
+S.Date_Started,
+S.Force_CutOff_High,
+S.Force_CutOff_Low,
+S.Frequency_CutOff_High,
+S.Frequency_CutOff_Low
+from Users U
+JOIN Sessions S ON
+S.Users_id = U.id
+JOIN Workouts W ON
+S.Workouts_id = W.id

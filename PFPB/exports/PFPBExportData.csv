@@ -1,0 +1,9 @@
+WorkoutID, WorkoutName, ActionOnCutOff_Force, ActionOnCutOff_Frequency, NumberOfRounds, RoundTime, BreakTime, Visibility_Currentforce,Visibility_GoalForce, Visibility_CurrentFrequency, Visibility_GoalFrequency, Visibility_Timer, UserThoughtLevel
+1,SuperBad,300,15,5,5,2,NO,YES,YES,YES,YES
+2,SuperGood,19,30,20,5,2,YES,YES,NO,YES,NO
+3,df,sdf,,,,,,,,,
+5,Test,null,null,null,null,null,null,null,null,null,null
+6,New Workout,Color Change for box,Music Frequency,4,3,3,TRUE,TRUE,TRUE,FALSE,TRUE
+7,Workout 2,Music Frequency,Music Frequency,4,123,332,TRUE,FALSE,TRUE,FALSE,TRUE
+8,This Is A Test,Both,Both,2,1,1,TRUE,TRUE,TRUE,TRUE,TRUE
+9,TesterForQuickWorkout,Music Frequency,Both,2,1,1,TRUE,TRUE,TRUE,TRUE,TRUE

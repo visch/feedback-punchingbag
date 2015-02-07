@@ -1,0 +1,6 @@
+DELETE from Data;
+Delete from Rounds;
+Delete from Sessions;
+Delete from Users;
+Delete from Workouts; 
+Delete from sqlite_sequence;
